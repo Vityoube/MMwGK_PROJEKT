@@ -1,13 +1,21 @@
 #include "openglwidget.h"
 
-double scene_left=-10.0, scene_right=10.0,scene_top=10.0,scene_bottom=-10.0,scene_near=1.0,scene_far=15.0;
-double width_height_ratio=1.0;
-
 OpenGLWidget::OpenGLWidget(QWidget* parent):
 QGLWidget(parent){
     QTimer * timer=new QTimer;
     connect(timer,SIGNAL(timeout()),SLOT(animation()));
-    timer->start(30);
+    timer->start(60);
+}
+
+FIBITMAP * OpenGLWidget::load_bitmap(char const* file_name){
+    FIBITMAP * bitmap;
+    FREE_IMAGE_FORMAT fif=FreeImage_GetFIFFromFilename(file_name);
+    bitmap=FreeImage_Load(fif,file_name,JPEG_DEFAULT);
+    if (!bitmap){
+        std::cerr<<"Could not load fish texture image"<<std::endl;
+        exit(0);
+    }
+    return bitmap;
 }
 
 void OpenGLWidget::initializeGL(){
@@ -19,6 +27,11 @@ void OpenGLWidget::initializeGL(){
     glOrtho(scene_left,scene_right,scene_bottom,scene_top,scene_near,scene_far);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
+    fish_texture_bitmap=load_bitmap("fish_texture.jpg");
+    bottom_texture_bitmap=load_bitmap("bottom_texture.jpg");
+    fish_texture=fish.load_fish_texture(fish_texture_bitmap);
+    bottom_texture=bottom.load_texture(bottom_texture_bitmap);
 }
 
 void OpenGLWidget::resizeGL(int width, int height){
@@ -26,24 +39,47 @@ void OpenGLWidget::resizeGL(int width, int height){
     glViewport(0,0,width,height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    GLfloat resized_scene_left=scene_left*width_height_ratio, resized_scene_right=scene_right*width_height_ratio,
-            resized_scene_top=scene_top*width_height_ratio, resized_scene_bottom=scene_bottom*width_height_ratio;
-    glOrtho(resized_scene_left,resized_scene_right,resized_scene_bottom,resized_scene_top,scene_near,scene_far);
+    glOrtho(scene_left,scene_right,scene_bottom,scene_top,scene_near,scene_far);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
+    fish_texture_bitmap=load_bitmap("fish_texture.jpg");
+    bottom_texture_bitmap=load_bitmap("bottom_texture.jpg");
+    fish_texture=fish.load_fish_texture(fish_texture_bitmap);
+    bottom_texture=bottom.load_texture(bottom_texture_bitmap);
 }
 
 void OpenGLWidget::paintGL(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
     glPushMatrix();
-
     glTranslatef(fish.center_x,fish.center_y,fish.center_z);
-    glRotatef(camera_x_rotation/64,1.0f,0.0f,0.0f);
-    glRotatef(camera_y_rotation/64,0.0f,1.0f,0.0f);
+    glRotatef(-20.0f,1.0f,0.0f,0.0f);
+    glRotatef(camera_y_rotation/32,0.0f,1.0f,0.0f);
     glTranslatef(-fish.center_x,-fish.center_y,-fish.center_z);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glTexGenf(GL_S,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
+    glTexGenf(GL_T,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
+    glBindTexture(GL_TEXTURE_2D,fish_texture);
     fish.draw();
     glPopMatrix();
+    glPushMatrix();
+//    glTranslatef(bottom.center_x,bottom.center_y,bottom.center_z);
+    glTranslated(0,0,bottom.center_z);
+
+    glRotatef(-20.0f,1.0f,0.0f,0.0f);
+    glRotatef(camera_y_rotation/32,0.0f,1.0f,0.0f);
+    glTranslated(0,0,-bottom.center_z);
+//    glTranslatef(-bottom.center_x,-bottom.center_y,-bottom.center_z);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glTexGenf(GL_S,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP);
+    glTexGenf(GL_T,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP);
+    glBindTexture(GL_TEXTURE_2D,bottom_texture);
+    bottom.draw();
+
+    glPopMatrix();
+
 }
 
 void OpenGLWidget::mousePressEvent(QMouseEvent *event){
@@ -76,10 +112,11 @@ void OpenGLWidget::mouseMoveEvent(QMouseEvent *event){
 }
 
 void OpenGLWidget::animation(){
-    if (fish.back_fin_z_move>0.5)
+    if (fish.back_fin_z_move>0.2)
         fish.back_fin_z_move_direction=-1;
-    else if (fish.back_fin_z_move<-0.5)
+    else if (fish.back_fin_z_move<-0.2)
         fish.back_fin_z_move_direction=1;
     fish.back_fin_z_move+=fish.back_fin_z_move_direction*0.05;
     updateGL();
 }
+

@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     openglwidget.cpp \
-    fish.cpp
+    fish.cpp \
+    bottom.cpp
 
 HEADERS  += mainwindow.h \
     openglwidget.h \
-    fish.h
+    fish.h \
+    bottom.h
 
 FORMS    += mainwindow.ui
 LIBS    +=  -lfreeimage

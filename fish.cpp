@@ -5,99 +5,105 @@ Fish::Fish(){
 }
 
 void Fish::draw(){
-    glEnable(GL_TEXTURE_2D);
-    GLuint texture=load_fish_texture();
-    glBindTexture( GL_TEXTURE_2D, texture );
-    glBegin(GL_TRIANGLE_STRIP);
-    glVertex3d(center_x,center_y,center_z-0.5);
-    glVertex3d(center_x-2,center_y,center_z);
-    glVertex3d(center_x,center_y-1,center_z);
+    glDisable(GL_DEPTH_TEST);
+    GLfloat a=1,b=0.5,c=0.5;
+    glBegin(GL_LINES);
+    glColor4f(1.0f,1.0f,1.0f,1.0f);
+    for (GLfloat u=0.0f;u<=360.0f;u+=1)
+        for(GLfloat v=0.0f;v<=360.0f;v+=1){
+            GLfloat x=center_x+a*cos(u)*cos(v);
+            GLfloat z_translation;
+            if (x<-a/2)
+                z_translation=0;
+            else if (x>-a/2 && x<=a/2)
+                z_translation=-back_fin_z_move;
+            else if (x>a/2)
+                z_translation=back_fin_z_move;
 
-    glVertex3d(center_x,center_y,center_z-0.5);
-    glVertex3d(center_x-2,center_y,center_z);
-    glVertex3d(center_x,center_y+1,center_z);
+            GLfloat y=center_y+b*cos(u)*sin(v);
+            if (x>2*a/3 && u<=180)
+                y-=0.3;
+            else if (x>2*a/3 && u>180)
+                y+=0.3;
+            GLfloat z=center_z+c*sin(u)+z_translation;
+            glVertex3f(x,y,z);
+        }
+      glEnd();
 
-    glVertex3d(center_x,center_y,center_z-0.5);
-    glVertex3d(center_x+3,center_y,center_z-0.3);
-    glVertex3d(center_x,center_y-1,center_z);
+      glBegin(GL_POLYGON);
+      glVertex3d(center_x+a/2,center_y,center_z+0.1+back_fin_z_move/2);
+      glVertex3d(center_x+a+1,center_y+b*2,center_z+0.1+back_fin_z_move);
+      glVertex3d(center_x+a+0.5,center_y,center_z+0.1+back_fin_z_move);
+      glVertex3d(center_x+a+1,center_y-b*2,center_z+0.1+back_fin_z_move);
 
-    glVertex3d(center_x,center_y,center_z-0.5);
-    glVertex3d(center_x+3,center_y,center_z-0.3);
-    glVertex3d(center_x,center_y+1,center_z);
+      glVertex3d(center_x+a/2,center_y,center_z-0.1+back_fin_z_move/2);
+      glVertex3d(center_x+a+1,center_y+b*2,center_z-0.1+back_fin_z_move);
+      glVertex3d(center_x+a+0.5,center_y,center_z-0.1+back_fin_z_move);
+      glVertex3d(center_x+a+1,center_y-b*2,center_z-0.1+back_fin_z_move);
 
-    glVertex3d(center_x,center_y,center_z+0.5);
-    glVertex3d(center_x-2,center_y,center_z);
-    glVertex3d(center_x,center_y-1,center_z);
+      glVertex3d(center_x+a/2,center_y,center_z-0.1+back_fin_z_move/2);
+      glVertex3d(center_x+a/2,center_y,center_z+0.1+back_fin_z_move/2);
+      glVertex3d(center_x+a+1,center_y+b*2,center_z-0.1+back_fin_z_move);
+      glVertex3d(center_x+a+1,center_y+b*2,center_z+0.1+back_fin_z_move);
 
-    glVertex3d(center_x,center_y,center_z+0.5);
-    glVertex3d(center_x-2,center_y,center_z);
-    glVertex3d(center_x,center_y+1,center_z);
+      glVertex3d(center_x+a/2,center_y,center_z-0.1+back_fin_z_move/2);
+      glVertex3d(center_x+a/2,center_y,center_z+0.1+back_fin_z_move/2);
+      glVertex3d(center_x+a+1,center_y-b*2,center_z-0.1+back_fin_z_move);
+      glVertex3d(center_x+a+1,center_y-b*2,center_z+0.1+back_fin_z_move);
+      glEnd();
 
-    glVertex3d(center_x,center_y,center_z+0.5);
-    glVertex3d(center_x+3,center_y,center_z+0.3);
-    glVertex3d(center_x,center_y-1,center_z);
+      glBegin(GL_TRIANGLES);
+      glVertex3d(center_x-a/2,center_y+b-0.2,center_z+0.1-back_fin_z_move);
+      glVertex3d(center_x+a/2,center_y+b-0.2,center_z+0.1-back_fin_z_move);
+      glVertex3d(center_x+a,center_y+b*2,center_z+0.1-back_fin_z_move);
 
-    glVertex3d(center_x,center_y,center_z+0.5);
-    glVertex3d(center_x+3,center_y,center_z+0.3);
-    glVertex3d(center_x,center_y+1,center_z);
+      glVertex3d(center_x-a/2,center_y+b-0.2,center_z-0.1-back_fin_z_move);
+      glVertex3d(center_x+a/2,center_y+b-0.2,center_z-0.1-back_fin_z_move);
+      glVertex3d(center_x+a,center_y+b*2,center_z-0.1-back_fin_z_move);
 
-    glVertex3d(center_x,center_y+1,center_z);
-    glVertex3d(center_x+3,center_y,center_z+0.3);
-    glVertex3d(center_x+3,center_y,center_z-0.3);
+      glEnd();
+      glBegin(GL_QUADS);
+      glVertex3d(center_x-a/2,center_y+b-0.2,center_z-0.1-back_fin_z_move);
+      glVertex3d(center_x-a/2,center_y+b-0.2,center_z+0.1-back_fin_z_move);
+      glVertex3d(center_x+a,center_y+b*2,center_z-0.1-back_fin_z_move);
+      glVertex3d(center_x+a,center_y+b*2,center_z+0.1-back_fin_z_move);
 
-    glVertex3d(center_x,center_y-1,center_z);
-    glVertex3d(center_x+3,center_y,center_z+0.3);
-    glVertex3d(center_x+3,center_y,center_z-0.3);
+      glVertex3d(center_x+a/2,center_y+b-0.2,center_z-0.1-back_fin_z_move);
+      glVertex3d(center_x+a/2,center_y+b-0.2,center_z+0.1-back_fin_z_move);
+      glVertex3d(center_x+a,center_y+b*2,center_z-0.1-back_fin_z_move);
+      glVertex3d(center_x+a,center_y+b*2,center_z+0.1-back_fin_z_move);
+      glEnd();
 
-    glEnd();
+      glBegin(GL_TRIANGLES);
+      glVertex3d(center_x+a/3,center_y-b+0.2,center_z+c/2-0.3+back_fin_z_move);
+      glVertex3d(center_x+(2*a/3),center_y-b+0.2,center_z+c/2-0.3+back_fin_z_move);
+      glVertex3d(center_x+a/3,center_y-b+0.15,center_z+c+0.2+back_fin_z_move);
 
-    glBegin(GL_POLYGON);
-    glVertex3d(center_x+2,center_y,center_z+0.3);
-    glVertex3d(center_x+5,center_y+0.8,center_z+back_fin_z_move);
-    glVertex3d(center_x+4.5,center_y,center_z+back_fin_z_move);
-    glVertex3d(center_x+5,center_y-0.8,center_z+back_fin_z_move);
+      glVertex3d(center_x+a/3,center_y-b+0.1,center_z+c/2-0.3+back_fin_z_move);
+      glVertex3d(center_x+(2*a/3),center_y-b+0.1,center_z+c/2-0.3+back_fin_z_move);
+      glVertex3d(center_x+a/3,center_y-b+0.15,center_z+c+0.2+back_fin_z_move);
 
-    glVertex3d(center_x+2,center_y,center_z-0.3);
-    glVertex3d(center_x+5,center_y+0.8,center_z+back_fin_z_move);
-    glVertex3d(center_x+4.5,center_y,center_z+back_fin_z_move);
-    glVertex3d(center_x+5,center_y-0.8,center_z+back_fin_z_move);
-    glEnd();
+      glVertex3d(center_x+a/3,center_y-b+0.1,center_z+c/2-0.3+back_fin_z_move);
+      glVertex3d(center_x+a/3,center_y-b+0.2,center_z+c/2-0.3+back_fin_z_move);
+      glVertex3d(center_x+a/3,center_y-b+0.15,center_z+c+0.2+back_fin_z_move);
+      glEnd();
+      glBegin(GL_TRIANGLES);
+      glVertex3d(center_x+a/3,center_y-b+0.2,center_z-c/2+0.3+back_fin_z_move);
+      glVertex3d(center_x+(2*a/3),center_y-b+0.2,center_z-c/2+0.3+back_fin_z_move);
+      glVertex3d(center_x+a/3,center_y-b+0.15,center_z-c-0.2+back_fin_z_move);
 
-    glBegin(GL_TRIANGLES);
-    glVertex3d(center_x+1.2,center_y-0.5,center_z-0.2);
-    glVertex3d(center_x+1.5,center_y-0.5,center_z-0.2);
-    glVertex3d(center_x+1,center_y-1+side_fins_y_move,center_z-0.4+side_fins_z_move);
+      glVertex3d(center_x+a/3,center_y-b+0.1,center_z-c/2+0.3+back_fin_z_move);
+      glVertex3d(center_x+(2*a/3),center_y-b+0.1,center_z-c/2+0.3+back_fin_z_move);
+      glVertex3d(center_x+a/3,center_y-b+0.15,center_z-c-0.2+back_fin_z_move);
 
-    glVertex3d(center_x+1.2,center_y-0.5,center_z-0.1);
-    glVertex3d(center_x+1.5,center_y-0.5,center_z-0.1);
-    glVertex3d(center_x+1,center_y-1+side_fins_y_move,center_z-0.4+side_fins_z_move);
-
-    glVertex3d(center_x+1.2,center_y-0.5,center_z-0.1);
-    glVertex3d(center_x+1.2,center_y-0.5,center_z-0.2);
-    glVertex3d(center_x+1,center_y-1+side_fins_y_move,center_z-0.4+side_fins_z_move);
-
-    glVertex3d(center_x+1.2,center_y-0.5,center_z+0.1);
-    glVertex3d(center_x+1.5,center_y-0.5,center_z+0.1);
-    glVertex3d(center_x+1,center_y-1+side_fins_y_move,center_z+0.4+side_fins_z_move);
-
-    glVertex3d(center_x+1.2,center_y-0.5,center_z+0.2);
-    glVertex3d(center_x+1.5,center_y-0.5,center_z+0.2);
-    glVertex3d(center_x+1,center_y-1+side_fins_y_move,center_z+0.4+side_fins_z_move);
-
-    glVertex3d(center_x+1.2,center_y-0.5,center_z+0.1);
-    glVertex3d(center_x+1.2,center_y-0.5,center_z+0.2);
-    glVertex3d(center_x+1,center_y-1+side_fins_y_move,center_z+0.4+side_fins_z_move);
-    glEnd();
+      glVertex3d(center_x+a/3,center_y-b+0.1,center_z-c/2+0.3+back_fin_z_move);
+      glVertex3d(center_x+a/3,center_y-b+0.2,center_z-c/2+0.3+back_fin_z_move);
+      glVertex3d(center_x+a/3,center_y-b+0.15,center_z-c-0.2+back_fin_z_move);
+      glEnd();
 }
 
-GLuint Fish::load_fish_texture(){
-    FIBITMAP * bitmap;
-    FREE_IMAGE_FORMAT fif=FreeImage_GetFIFFromFilename("fish_texture.jpg");
-    bitmap=FreeImage_Load(fif,"fish_texture.jpg",JPEG_DEFAULT);
-    if (!bitmap){
-        std::cerr<<"Could not load fish texture image"<<std::endl;
-        exit(0);
-    }
+GLuint Fish::load_fish_texture(FIBITMAP * bitmap){
+
     GLuint tex_id=0;
     int x=0, y=0;
     int height,width;
@@ -119,12 +125,9 @@ GLuint Fish::load_fish_texture(){
         }
     glGenTextures(1,&tex_id);
     glBindTexture(GL_TEXTURE_2D,tex_id);
-    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_R,GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
-    glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,texels);
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,texels);
     free(texels);
     FreeImage_Unload(bitmap);
     return tex_id;
