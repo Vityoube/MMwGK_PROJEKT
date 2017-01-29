@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/bottom_texture.png</file>
+        <file>images/fish_texture.jpg</file>
+    </qresource>
+</RCC>

@@ -12,7 +12,7 @@ FIBITMAP * OpenGLWidget::load_bitmap(char const* file_name){
     FREE_IMAGE_FORMAT fif=FreeImage_GetFIFFromFilename(file_name);
     bitmap=FreeImage_Load(fif,file_name,JPEG_DEFAULT);
     if (!bitmap){
-        std::cerr<<"Could not load fish texture image"<<std::endl;
+        std::cerr<<"Could not load texture image "<<file_name<<std::endl;
         exit(0);
     }
     return bitmap;
@@ -29,7 +29,7 @@ void OpenGLWidget::initializeGL(){
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     fish_texture_bitmap=load_bitmap("fish_texture.jpg");
-    bottom_texture_bitmap=load_bitmap("bottom_texture.jpg");
+    bottom_texture_bitmap=load_bitmap("bottom_texture.png");
     fish_texture=fish.load_fish_texture(fish_texture_bitmap);
     bottom_texture=bottom.load_texture(bottom_texture_bitmap);
 }
@@ -44,7 +44,7 @@ void OpenGLWidget::resizeGL(int width, int height){
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     fish_texture_bitmap=load_bitmap("fish_texture.jpg");
-    bottom_texture_bitmap=load_bitmap("bottom_texture.jpg");
+    bottom_texture_bitmap=load_bitmap("bottom_texture.png");
     fish_texture=fish.load_fish_texture(fish_texture_bitmap);
     bottom_texture=bottom.load_texture(bottom_texture_bitmap);
 }
@@ -63,6 +63,7 @@ void OpenGLWidget::paintGL(){
     glTexGenf(GL_T,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
     glBindTexture(GL_TEXTURE_2D,fish_texture);
     fish.draw();
+
     glPopMatrix();
     glPushMatrix();
 //    glTranslatef(bottom.center_x,bottom.center_y,bottom.center_z);

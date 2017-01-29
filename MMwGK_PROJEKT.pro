@@ -26,5 +26,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 LIBS    +=  -lfreeimage
 
-DISTFILES += \
-    fish_texture.jpg
+DISTFILES +=
+
+RESOURCES +=

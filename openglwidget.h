@@ -30,6 +30,7 @@ public:
     FIBITMAP * fish_texture_bitmap;
     FIBITMAP * bottom_texture_bitmap;
 
+
 private:
     bool leftMousePressed=false;
     GLfloat camera_x_rotation=0.0f;
